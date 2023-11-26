@@ -12,6 +12,7 @@ class GameScene: SKScene {
 
     var bird = SKSpriteNode()
     var boxs = [SKSpriteNode]()
+    var isGameStarted = false
 
     override func didMove(to view: SKView) {
         /*
@@ -26,14 +27,14 @@ class GameScene: SKScene {
         // Physics
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.scene?.scaleMode = .aspectFit
-        
-        
+
+
         // bird
         bird = childNode(withName: "bird") as! SKSpriteNode
         let birdTexture = SKTexture(imageNamed: "bird")
 
         bird.physicsBody = SKPhysicsBody(circleOfRadius: birdTexture.size().height / 13)
-        bird.physicsBody?.affectedByGravity = true
+        bird.physicsBody?.affectedByGravity = false
         bird.physicsBody?.isDynamic = true
         bird.physicsBody?.mass = 0.1
 
@@ -66,6 +67,7 @@ class GameScene: SKScene {
 
     func touchDown(atPoint pos: CGPoint) {
 
+
     }
 
     func touchMoved(toPoint pos: CGPoint) {
@@ -79,10 +81,65 @@ class GameScene: SKScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
+        if isGameStarted == false {
+
+            if let touch = touches.first {
+
+                let touchLocation = touch.location(in: self)
+                let touchNodes = nodes(at: touchLocation)
+
+                if touchNodes.isEmpty == false {
+
+                    for node in touchNodes {
+
+                        if let sprite = node as? SKSpriteNode {
+
+                            if sprite == bird {
+
+                                bird.position = touchLocation
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isGameStarted == false {
 
+            if let touch = touches.first {
+
+                let touchLocation = touch.location(in: self)
+                let touchNodes = nodes(at: touchLocation)
+
+                if touchNodes.isEmpty == false {
+
+                    for node in touchNodes {
+
+                        if let sprite = node as? SKSpriteNode {
+
+                            if sprite == bird {
+
+                                bird.position = touchLocation
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
