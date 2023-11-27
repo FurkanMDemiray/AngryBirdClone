@@ -8,12 +8,19 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
 
     var bird = SKSpriteNode()
     var boxs = [SKSpriteNode]()
     var isGameStarted = false
     var startPosition: CGPoint?
+    
+    enum ColliderType: UInt32 {
+        case Bird = 1
+        case Box = 2
+        //case Ground = 4  iki katı olarak devam etmeli
+        //case Tree = 8
+    }
 
     override func didMove(to view: SKView) {
         /*
@@ -28,6 +35,7 @@ class GameScene: SKScene {
         // Physics
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.scene?.scaleMode = .aspectFit
+        self.physicsWorld.contactDelegate = self
 
 
         // bird
@@ -39,6 +47,11 @@ class GameScene: SKScene {
         bird.physicsBody?.isDynamic = true
         bird.physicsBody?.mass = 0.1
         startPosition = bird.position
+        
+        bird.physicsBody?.contactTestBitMask = ColliderType.Bird.rawValue
+        bird.physicsBody?.categoryBitMask = ColliderType.Bird.rawValue
+        bird.physicsBody?.collisionBitMask = ColliderType.Bird.rawValue
+        
 
 
 
@@ -50,6 +63,7 @@ class GameScene: SKScene {
         for i in 0...5 {
             if let box = childNode(withName: "box\(i)") as? SKSpriteNode {
                 boxs.append(box)
+                boxs[i].physicsBody?.collisionBitMask = ColliderType.Bird.rawValue
                 boxs[i].texture = brickTexture
                 boxs[i].physicsBody = SKPhysicsBody(rectangleOf: size)
                 boxs[i].physicsBody?.affectedByGravity = true
@@ -65,7 +79,15 @@ class GameScene: SKScene {
 
 
     }
-
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        
+        if contact.bodyA.collisionBitMask == ColliderType.Bird.rawValue || contact.bodyB.collisionBitMask == ColliderType.Bird.rawValue {
+            
+            print("Bird has been hit.")
+            	
+        }
+    }
 
     func touchDown(atPoint pos: CGPoint) {
 
